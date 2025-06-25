@@ -2,6 +2,9 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
 const axios = require('axios');
 
+console.log("Loaded Token:", process.env.DISCORD_BOT_TOKEN);
+
+
 const client = new Client({
   intents: [
     GatewayIntentBits.DirectMessages,
