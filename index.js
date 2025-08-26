@@ -36,16 +36,25 @@ client.on(Events.MessageCreate, async (message) => {
   }
 });
 
-client.on(Events.GuildMemberAdd, async (member) => {
+client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
   try {
-    await axios.post(webhookUrl, {
-      event: 'user_joined',
-      user_id: member.user.id,
-      username: member.user.username
-    });
-    console.log('Sent join event to n8n webhook');
+    const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
+    if (addedRoles.size === 0) return;
+
+    for (const [roleId, role] of addedRoles) {
+      const payload = {
+        event: 'role_added',
+        user_id: newMember.user.id,
+        username: newMember.user.username,
+        role_id: role.id,
+        role_name: role.name
+      };
+      console.log('Sending role_added payload to n8n:', payload);
+      await axios.post(webhookUrl, payload);
+    }
+    console.log(`Sent ${addedRoles.size} role_added event(s) to n8n webhook`);
   } catch (error) {
-    console.error('Error sending join event:', error.message);
+    console.error('Error sending role_added event:', error.message);
   }
 });
 
