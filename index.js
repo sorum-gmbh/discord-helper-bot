@@ -10,7 +10,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessages
   ],
-  partials: [Partials.Channel]
+  partials: [Partials.Channel, Partials.GuildMember]
 });
 
 const webhookUrl = process.env.N8N_WEBHOOK_DM;
@@ -35,7 +35,10 @@ client.on(Events.MessageCreate, async (message) => {
 
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
   try {
-    const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
+    const oldRolesCache = oldMember && oldMember.roles && oldMember.roles.cache ? oldMember.roles.cache : null;
+    const addedRoles = oldRolesCache
+      ? newMember.roles.cache.filter(role => !oldRolesCache.has(role.id))
+      : newMember.roles.cache; // Kein alter Cache: alle aktuellen Rollen als hinzugefügt werten
     if (addedRoles.size === 0) return;
 
     for (const [roleId, role] of addedRoles) {
