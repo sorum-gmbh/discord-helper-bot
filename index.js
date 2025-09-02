@@ -42,6 +42,7 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
     if (addedRoles.size === 0) return;
 
     for (const [roleId, role] of addedRoles) {
+      if(roleId === process.env.ROLE_NOW || roleId === process.env.ROLE_LATER) {
       const payload = {
         event: 'role_added',
         user_id: newMember.user.id,
@@ -51,6 +52,7 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
       };
       console.log('Sending role_added payload to n8n:', payload);
       await axios.post(webhookUrl, payload);
+      }
     }
     console.log(`Sent ${addedRoles.size} role_added event(s) to n8n webhook`);
   } catch (error) {
