@@ -87,4 +87,18 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
   }
 });
 
+client.on(Events.GuildMemberRemove, async (member) => {
+  try {
+    const payload = {
+      event: 'user_left',
+      user_id: member.user.id,
+      username: member.user.username,
+    };
+    console.log('Sending user_left payload to n8n:', payload);
+    await axios.post(webhookUrl, payload);
+  } catch (err) {
+    console.error('Error sending user_left event:', err.message);
+  }
+});
+
 client.login(process.env.DISCORD_BOT_TOKEN);
