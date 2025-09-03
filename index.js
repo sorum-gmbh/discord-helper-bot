@@ -78,7 +78,7 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
       await axios.post(webhookUrl, payload);
       }
       else{
-        console.log('Role not in allowed roles');
+        console.log('Role not in allowed roles. Role ID: ' + roleId);
       }
     }
     console.log(`Sent ${addedRoles.size} role_added event(s) to n8n webhook`);
